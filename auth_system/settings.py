@@ -34,7 +34,7 @@ SECRET_KEY = "(d+s(g2p*cknwbn$3a#0bv$k3o)47rs21f5d_0k^%jv4q8ld)y"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://ufaberassignment.herokuapp.com/']
+ALLOWED_HOSTS = ['ufaberassignment.herokuapp.com/']
 
 
 # Application definition

@@ -1,0 +1,141 @@
+{% extends "account/base.html" %}
+{% block body_block %}
+<div class="container">
+	<h2>Timer:</h2>
+	<small>Start the timer when you begin wroking on a task and stop when you end.</small>
+	<div class="clock-face">
+	    <div class="digital-time"></div>
+	    <div class="greeting"></div>
+	    <div class="screen">
+	        <h1 class="digits">
+	            <span id="min" class="minutes">00</span>:<span id="sec" class="seconds">00</span>
+	        </h1>
+	    </div>
+	    <div class="clock-dial">
+	        <button id="start-btn">start</button>
+	        <button id="stop-btn">stop</button>
+	        <button id="reset-btn">reset</button>
+	    </div>
+	</div>
+	<br><br>
+</div>
+
+<form method="POST" enctype="multipart/form-data" class="col-md-6" action = "{% url 'projects' %}">
+	{% csrf_token %}
+	  <div class="form-group">
+	    <label for="name">Task Name: </label>
+	    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="taskname" placeholder="Enter task name" required>
+	  </div>
+	  <div class="form-group">
+	    <label for="exampleFormControlSelect1">Project Name: </label>
+	    <select required class="form-control" name="project" id="exampleFormControlSelect1">
+	      <option>Project 1</option>
+	      <option>Project 2</option>
+	      <option>Project 3</option>
+	    </select>
+	  </div>
+	  <div class="form-group">
+	  	<label>Start Time:</label>
+	  	<input class="form-control" type="time" id="start" name="start" readonly>
+	  </div>
+	  <div class="form-group">
+	  	<label>End Time:</label>
+	  	<input  class="form-control" type="time" id="end" name="end" readonly>
+	  </div>
+	  <center><button type="submit" class="btn btn-primary">Submit</button></center>
+</form>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Task Name</th>
+			<th>Project Name</th>
+			<th>Start Time</th>
+			<th>End Time</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% if li %}
+		{% for entries in li %}
+			<tr>
+				<td>{{ entries.task }}</td>
+				<td>{{ entries.project }}</td>
+				<td>{{ entries.start }}</td>
+				<td>{{ entries.end }}</td>
+			</tr>
+		{% endfor %}
+		{% endif %}
+	</tbody>
+</table>
+</table>
+
+<script type="text/javascript">
+var start = document.getElementById("start");
+var end = document.getElementById("end");
+var today = new Date();
+start.value = today.toLocaleTimeString();
+const startBtn = document.querySelector("#start-btn")
+const stopBtn = document.querySelector("#stop-btn")
+const resetBtn = document.querySelector("#reset-btn")
+var minDigits = document.getElementById("min");
+var secDigits = document.getElementById("sec");
+
+
+var hrs = 0;
+var mins = 0;
+var secs = 0;
+var countSec = 0;
+var timerVar = null;
+
+
+function startCounter() {
+    ++countSec;
+
+    hrs = Math.floor(countSec /3600);
+    mins = Math.floor((countSec - hrs*3600)/60);
+    secs = countSec - (hrs*3600 + mins*60);
+
+    if (secs < 10) {
+        secDigits.innerHTML = "0" + secs;
+    }  else { secDigits.innerHTML = secs; }
+
+    minDigits.innerHTML = "0" + mins;   
+}
+
+startBtn.addEventListener('click', () => {
+    timerVar = setInterval(startCounter, 1000);
+})
+
+stopBtn.addEventListener('click', () => {
+    if (timerVar)
+    clearInterval(timerVar);
+	times = [start.value,hrs+":"+mins+":"+secs];
+	const z = (n) => (n < 10 ? '0' : '') + n;
+
+    let hour = 0;
+    let minute = 0;
+    let second = 0;
+    for (const time of times) {
+        const splited = time.split(':');
+        hour += parseInt(splited[0]);
+        minute += parseInt(splited[1]);
+        second += parseInt(splited[2]);
+    }
+    const seconds = second % 60;
+    const minutes = parseInt(minute % 60) + parseInt(second / 60);
+    const hours = hour + parseInt(minute / 60);
+
+	end.value = z(hours) + ':' + z(minutes) + ':' + z(seconds);
+});
+
+resetBtn.addEventListener('click', () => {
+    countSec = 0;
+    secDigits.innerHTML = "00";
+    minDigits.innerHTML = "00";
+    clearInterval(timerVar);
+});
+</script>
+
+{% endblock %}
+
+
